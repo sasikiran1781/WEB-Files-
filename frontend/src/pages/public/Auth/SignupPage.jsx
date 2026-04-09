@@ -31,6 +31,12 @@ const SignupPage = () => {
             return;
         }
 
+        if (!formData.password || !formData.confirmPassword) {
+            setError("All fields are required.");
+            setIsLoading(false);
+            return;
+        }
+
         if (formData.password.length < 8) {
             setError("Password must be at least 8 characters long.");
             return;
@@ -48,9 +54,16 @@ const SignupPage = () => {
             await new Promise(r => setTimeout(r, 600));
             setStatusText('Securing credentials...');
             
-            // Send full_name, email, and password to backend. Discard confirmPassword.
-            const { confirmPassword: _, name, email, ...rest } = formData;
-            const signupPayload = { ...rest, full_name: trimmedName, email: trimmedEmail };
+            // Sending a robust payload to handle any backend naming variants
+            const signupPayload = { 
+                full_name: trimmedName,
+                name: trimmedName,
+                email: trimmedEmail,
+                password: formData.password,
+                phone: ""
+            };
+            
+            console.log('Attempting signup with:', { ...signupPayload, password: '***' });
             await authService.signup(signupPayload);
             
             setStatusText('Redirecting to login...');
