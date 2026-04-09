@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Activity, Mail, Lock, User, Loader2, ArrowRight, ShieldCheck, CheckCircle2, Database, Zap } from 'lucide-react';
+import { Activity, Mail, Lock, User, Phone, Loader2, ArrowRight, ShieldCheck, CheckCircle2, Database, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../../../context/AppContext';
 import { authService } from '../../../services/api';
 
 const SignupPage = () => {
-    const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
+    const [formData, setFormData] = useState({ name: '', email: '', phone: '', password: '', confirmPassword: '' });
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [statusText, setStatusText] = useState('');
@@ -19,6 +19,7 @@ const SignupPage = () => {
         
         const trimmedName = formData.name.trim();
         const trimmedEmail = formData.email.trim().toLowerCase();
+        const trimmedPhone = formData.phone.trim();
         
         if (!trimmedName || trimmedName.length < 2) {
             setError("Please enter a valid full name.");
@@ -28,6 +29,12 @@ const SignupPage = () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(trimmedEmail)) {
             setError("Please enter a valid email address.");
+            return;
+        }
+
+        const phoneRegex = /^[6-9]\d{9}$/;
+        if (!phoneRegex.test(trimmedPhone)) {
+            setError("Please enter a valid 10-digit phone number starting with 6-9.");
             return;
         }
 
@@ -60,7 +67,7 @@ const SignupPage = () => {
                 name: trimmedName,
                 email: trimmedEmail,
                 password: formData.password,
-                phone: ""
+                phone: trimmedPhone
             };
             
             console.log('Attempting signup with:', { ...signupPayload, password: '***' });
@@ -160,6 +167,23 @@ const SignupPage = () => {
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                     className="w-full bg-white border border-stone-200 rounded-xl pl-12 pr-4 py-3.5 text-sm focus:border-yellow-500/50 outline-none transition-all duration-300 text-stone-800 placeholder-[#A1A5AB]/50 shadow-inner"
                                     placeholder="name@email.com"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <div className="col-span-1 md:col-span-2">
+                            <label className="block text-xs font-medium text-stone-500 mb-2 pl-1">
+                                Phone Number
+                            </label>
+                            <div className="relative group/input">
+                                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-500 group-focus-within/input:text-yellow-400 transition-colors duration-300" />
+                                <input
+                                    type="tel"
+                                    value={formData.phone}
+                                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                    className="w-full bg-white border border-stone-200 rounded-xl pl-12 pr-4 py-3.5 text-sm focus:border-yellow-500/50 outline-none transition-all duration-300 text-stone-800 placeholder-[#A1A5AB]/50 shadow-inner"
+                                    placeholder="9876543210"
                                     required
                                 />
                             </div>
