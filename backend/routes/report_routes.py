@@ -248,6 +248,7 @@ def upload_report():
             file_path=file_path, 
             existing_patients=user_patients_context if user_patients_context else None
         )
+        print(f"📡 [DEBUG] AI Analysis Result: {analysis}")
         
         if analysis.get('status') == 'error':
             return jsonify(analysis), 400

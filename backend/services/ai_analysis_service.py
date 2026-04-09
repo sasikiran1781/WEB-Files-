@@ -13,8 +13,8 @@ genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 class AIAnalysisService:
     def __init__(self):
         # Professional AI Medical Assistant Model Selection
-        self.primary_model = "gemini-2.5-flash"
-        self.fallback_model = "gemini-2.5-flash-lite"
+        self.primary_model = "gemini-2.0-flash"
+        self.fallback_model = "gemini-1.5-flash"
         print(f"📡 [REVA AI] Initializing REVA Lead Medical Architect ({self.primary_model})")
 
     def _extract_json(self, text):
@@ -103,43 +103,16 @@ class AIAnalysisService:
 
         return deep_merge(data, defaults)
 
-    def analyze_report(self, ocr_text=None, file_path=None, previous_metrics=None, existing_patients=None, is_identity_pass=False):
-        """
-        MASTER MEDICAL PIPELINE:
-        OCR Cleaning -> Entity Extraction -> Risk Scoring -> Recovery Evaluation
-        """
-        
-        # Build Contextual Knowledge
+    def _generate_prompt(self, ocr_text, existing_patients=None, previous_metrics=None):
         context = ""
         if existing_patients:
             context += f"\n[DATABASE] Known Patients: {json.dumps(existing_patients)}"
         if previous_metrics:
             context += f"\n[LONGITUDINAL] Previous Metrics (Baseline): {json.dumps(previous_metrics)}"
 
-        if is_identity_pass:
-            prompt = f"""
-            Role: Medical Data Clerk
-            Objective: Extract ONLY the patient identity and report type from the document.
-            
-            INPUT: {ocr_text if ocr_text else "IMAGE SCAN"}
-            
-            Return JSON:
-            {{
-                "report_type": "Initial|Follow-up",
-                "patient_identity": {{
-                    "patient_name": "...",
-                    "patient_id": "...",
-                    "uhid": "...",
-                    "age": "...",
-                    "gender": "...",
-                    "hospital_name": "..."
-                }}
-            }}
-            """
-        else:
-            prompt = f"""
+        prompt = f"""
             Role: Lead AI Medical Architect (REVA)
-            Objective: Analyze the medical report and return a STRICT VALID JSON.
+            Objective: Analyze the medical report and return a valid JSON object.
     
             {context}
     
@@ -170,7 +143,6 @@ class AIAnalysisService:
                - Provide a "recovery_precautions" list for the patient to follow.
                - Provide a "calorie_goal" (e.g., "1800") and a "protein_goal" (e.g., "90g") based on recovery needs.
             7. MEDICATION EXTRACTION: Extract any prescribed medications found in the report.
-               Include: name, dosage, frequency, duration, and special instructions.
     
             OUTPUT FORMAT:
             {{
@@ -206,7 +178,7 @@ class AIAnalysisService:
                     "diet_summary": "High protein, low sodium recovery diet"
                 }},
                 "follow_up_analysis": {{
-                    "is_follow_up": true|false,
+                    "is_follow_up": true,
                     "matched_patient": true,
                     "improvement_percentage": 15.5,
                     "decline_percentage": 0.0,
@@ -221,6 +193,36 @@ class AIAnalysisService:
                 ]
             }}
             """
+        return prompt
+
+    def analyze_report(self, ocr_text=None, file_path=None, previous_metrics=None, existing_patients=None, is_identity_pass=False):
+        """
+        MASTER MEDICAL PIPELINE:
+        OCR Cleaning -> Entity Extraction -> Risk Scoring -> Recovery Evaluation
+        """
+        
+        if is_identity_pass:
+            prompt = f"""
+            Role: Medical Data Clerk
+            Objective: Extract ONLY the patient identity and report type from the document.
+            
+            INPUT: {ocr_text if ocr_text else "IMAGE SCAN"}
+            
+            Return JSON:
+            {{
+                "report_type": "Initial|Follow-up",
+                "patient_identity": {{
+                    "patient_name": "...",
+                    "patient_id": "...",
+                    "uhid": "...",
+                    "age": "...",
+                    "gender": "...",
+                    "hospital_name": "..."
+                }}
+            }}
+            """
+        else:
+            prompt = self._generate_prompt(ocr_text, existing_patients, previous_metrics)
 
         # Execution with Fallbacks
         for model_name in [self.primary_model, self.fallback_model]:
@@ -232,7 +234,7 @@ class AIAnalysisService:
                 if file_path and os.path.exists(file_path):
                     content.append(Image.open(file_path))
                 
-                # Step 5: Gemini Request with 120s Timeout and Retry
+                # Step 5: Gemini Request with 300s Timeout and Retry
                 start_time = time.time()
                 response = None
                 
