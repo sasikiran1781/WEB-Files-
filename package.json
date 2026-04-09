@@ -1,0 +1,13 @@
+{
+  "name": "reva-workspace",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=frontend",
+    "start": "npm run start --workspace=frontend",
+    "build": "npm run build --workspace=frontend"
+  }
+}

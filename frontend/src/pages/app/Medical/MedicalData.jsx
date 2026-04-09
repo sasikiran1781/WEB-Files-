@@ -101,7 +101,7 @@ const { latestAnalysis, patientHistory } = useApp();
                     subtitle="Unified patient biometric signature and clinical metric repository."
                 />
                 <div className="flex items-center space-x-4">
-                    <button onClick={handleExportData} className="px-6 py-3 rounded-2xl bg-stone-50 border border-stone-200 border border-stone-200 text-[10px] font-black uppercase tracking-widest text-stone-600 hover:text-stone-800 hover:bg-stone-100 transition-all flex items-center space-x-3">
+                    <button onClick={handleExportData} className="px-6 py-3 rounded-2xl bg-stone-50 border border-stone-200 text-[10px] font-black uppercase tracking-widest text-stone-600 hover:text-stone-800 hover:bg-stone-100 transition-all flex items-center space-x-3">
                         <Download className="w-4 h-4" />
                         <span>Export Bio-Data</span>
                     </button>
@@ -121,7 +121,7 @@ const { latestAnalysis, patientHistory } = useApp();
                             {/* Holographic ID Badge */}
                             <div className="relative mb-10">
                                 <div className="absolute -inset-4 bg-primary/10 blur-2xl rounded-full animate-pulse-slow"></div>
-                                <div className="relative bg-stone-50 border border-stone-200 border border-stone-200 rounded-[2.5rem] p-8 flex flex-col items-center text-center overflow-hidden">
+                                <div className="relative bg-stone-50 border border-stone-200 rounded-[2.5rem] p-8 flex flex-col items-center text-center overflow-hidden">
                                     <div className="absolute top-0 right-0 p-4">
                                         <Fingerprint className="w-6 h-6 text-primary/30" />
                                     </div>
@@ -203,7 +203,7 @@ const { latestAnalysis, patientHistory } = useApp();
                                     placeholder="SEARCH LEDGER..." 
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="bg-stone-50 border border-stone-200 border border-stone-200 rounded-2xl pl-12 pr-6 py-3 text-[10px] font-black text-stone-800 placeholder:text-stone-400 outline-none focus:border-primary/50 transition-all w-full md:w-64 tracking-widest" 
+                                    className="bg-stone-50 border border-stone-200 rounded-2xl pl-12 pr-6 py-3 text-[10px] font-black text-stone-800 placeholder:text-stone-400 outline-none focus:border-primary/50 transition-all w-full md:w-64 tracking-widest" 
                                 />
                             </div>
                         </div>

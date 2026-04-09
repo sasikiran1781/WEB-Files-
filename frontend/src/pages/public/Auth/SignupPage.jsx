@@ -215,7 +215,7 @@ const SignupPage = () => {
                             >
                                 {isLoading ? (
                                     <>
-                                        <Loader2 className="w-4 h-4 animate-spin text-black" />
+                                        <Loader2 className="w-4 h-4 animate-spin text-white" />
                                         <span>{statusText || 'Signing up...'}</span>
                                     </>
                                 ) : (

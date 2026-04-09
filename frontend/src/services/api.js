@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000',
+    baseURL: import.meta.env.VITE_API_URL || 'http://180.235.121.253:8151',
     timeout: 30000,
     headers: {
         'Content-Type': 'application/json',
@@ -10,7 +10,7 @@ const api = axios.create({
 
 // Long timeout instance for AI analysis uploads
 const apiLong = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000',
+    baseURL: import.meta.env.VITE_API_URL || 'http://180.235.121.253:8151',
     timeout: 120000,
     headers: {
         'Content-Type': 'application/json',

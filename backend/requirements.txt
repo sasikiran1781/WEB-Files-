@@ -11,3 +11,4 @@ pytesseract
 pillow
 werkzeug
 gunicorn
+flask-mail
